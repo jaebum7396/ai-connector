@@ -1,0 +1,38 @@
+server:
+  port: 7200
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${DISCOVERY_URL}
+
+spring:
+  application:
+    name: gpt-connector
+  profiles:
+    active: local
+  servlet:
+    multipart:
+      enabled: 'true'
+      max-request-size: 215MB
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+file:
+  uploadDir: ./images
+
+#SECRET KEY
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+jasypt:
+  encryptor:
+    password: ${JASYPT_ENCRYPTOR_PASSWORD}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}

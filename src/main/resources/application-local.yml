@@ -1,0 +1,8 @@
+cloud:
+  gateway:
+    uri: ${LOCAL_URL}
+spring:
+  cloud:
+    service-registry:
+      auto-registration:
+        enabled: 'false'
