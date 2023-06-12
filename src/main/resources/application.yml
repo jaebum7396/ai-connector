@@ -12,7 +12,7 @@ spring:
   application:
     name: gpt-connector
   profiles:
-    active: local
+    active: deploy
   servlet:
     multipart:
       enabled: 'true'
