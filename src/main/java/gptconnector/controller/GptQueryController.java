@@ -1,5 +1,6 @@
 package gptconnector.controller;
 
+import gptconnector.model.GptMessage;
 import gptconnector.model.Response;
 import gptconnector.service.GptQueryService;
 import io.jsonwebtoken.Claims;
@@ -15,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,11 +24,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Api(tags = "GptQueryController")
-@Tag(name = "GptQueryController", description = "챗GPT 프롬프트 컨트롤러")
+@Tag(name = "GptQueryController", description = "챗GPT query 컨트롤러")
 @RestController
 public class GptQueryController {
 
@@ -42,13 +41,13 @@ public class GptQueryController {
         this.gptQueryService = gptQueryService;
     }
 
-    @GetMapping("/query")
+    @PostMapping("/query")
     @Operation(summary="", description="")
-    public ResponseEntity<Response> query(HttpServletRequest request, @RequestParam String prompt) throws Exception {
-        String answer = gptQueryService.query(request, prompt);
+    public ResponseEntity<Response> query(HttpServletRequest request, @RequestParam String prompt, @RequestBody(required = false) List<GptMessage> prevMessages) throws Exception {
+        List<GptMessage> messages = gptQueryService.query(request, prompt, prevMessages);
 
         Map<String, Object> resultMap = new LinkedHashMap<>();
-        resultMap.put("answer", answer);
+        resultMap.put("messages", messages);
 
         Response response = Response.builder()
                 .statusCode(HttpStatus.OK.value())
@@ -56,7 +55,6 @@ public class GptQueryController {
                 .message("요청 성공")
                 .result(resultMap)
                 .build();
-
         return ResponseEntity.ok().body(response);
     }
 }
