@@ -16,7 +16,7 @@ public class GptRequest {
     private String prompt;
     private String suffix;
     @Builder.Default
-    private int max_tokens = 100;
+    private int max_tokens = 500;
     private double temperature; //왠만하면 조작 X
     private double top_p; //왠만하면 조작 X
     @Builder.Default
