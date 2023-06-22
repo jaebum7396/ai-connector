@@ -1,32 +1,35 @@
 package gptconnector.service;
 
+import gptconnector.model.GptImageRequest;
 import gptconnector.model.GptMessage;
 import gptconnector.model.GptRequest;
+import gptconnector.model.GptTextRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import okhttp3.OkHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -48,7 +51,7 @@ public class GptQueryService {
 
     public List<GptMessage> query(HttpServletRequest request, String prompt, List<GptMessage> prevMessages) throws Exception {
         String apiUrl = "https://api.openai.com/v1/chat/completions";
-        GptRequest gptRequest = GptRequest.builder()
+        GptTextRequest gptRequest = GptTextRequest.builder()
                 .model("gpt-3.5-turbo")
                 .temperature(0.7)
                 .build();
@@ -74,6 +77,89 @@ public class GptQueryService {
         return prevMessages;
     }
 
+    public HashMap<String,Object> generations(HttpServletRequest request, String prompt) throws Exception {
+        String apiUrl = "https://api.openai.com/v1/images/generations";
+        GptImageRequest gptRequest = GptImageRequest.builder()
+                .prompt(prompt)
+                .n(1)
+                .build();
+        JSONObject resp = requestGpt(apiUrl, gptRequest);
+
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("created", resp.get("created"));
+        JSONArray dataJSONArray = resp.getJSONArray("data");
+        List<HashMap<String, Object>> dataArray = new ArrayList<>();
+        for(int i =0; i< dataJSONArray.length(); i++) {
+            HashMap<String, Object> dataMap = new HashMap<>();
+            JSONObject data = dataJSONArray.getJSONObject(i);
+            dataMap.put("url", data.getString("url"));
+            dataArray.add(dataMap);
+        }
+        resultMap.put("data", dataArray);
+        return resultMap;
+    }
+
+    public HashMap<String,Object> imageEdits(String prompt, MultipartFile file) throws Exception {
+        String apiUrl = "https://api.openai.com/v1/images/edits";
+        GptImageRequest gptRequest = GptImageRequest.builder()
+                .prompt(prompt)
+                .n(1)
+                .build();
+        JSONObject resp = multiPartRequestGpt(apiUrl, gptRequest, file);
+
+        HashMap<String, Object> resultMap = new HashMap<>();
+        resultMap.put("created", resp.get("created"));
+        JSONArray dataJSONArray = resp.getJSONArray("data");
+        List<HashMap<String, Object>> dataArray = new ArrayList<>();
+        for(int i =0; i< dataJSONArray.length(); i++) {
+            HashMap<String, Object> dataMap = new HashMap<>();
+            JSONObject data = dataJSONArray.getJSONObject(i);
+            dataMap.put("url", data.getString("url"));
+            dataArray.add(dataMap);
+        }
+        resultMap.put("data", dataArray);
+        return resultMap;
+    }
+
+    public JSONObject multiPartRequestGpt(String apiUrl, GptImageRequest gptRequest, MultipartFile file) throws IOException {
+        WebClient client = WebClient.builder()
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + OPENAI_API_KEY)
+                .build();
+
+        // Read the input stream once
+        InputStream inputStream = file.getInputStream();
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("image", new InputStreamResource(inputStream) {
+            @Override
+            public String getFilename() {
+                return file.getOriginalFilename();
+            }
+        });
+        body.add("prompt", gptRequest.getPrompt());
+        body.add("n", String.valueOf(gptRequest.getN()));
+        body.add("size", gptRequest.getSize());
+
+        ClientResponse clientResponse = client.post()
+                .uri(apiUrl)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(body))
+                .exchange()
+                .block();
+
+        // Get response body as string
+        String responseBody = clientResponse.bodyToMono(String.class).block();
+
+        // Convert response body to JSONObject
+        JSONObject jsonResponse = new JSONObject(responseBody);
+        System.out.println(jsonResponse);
+
+        // Close the input stream
+        inputStream.close();
+
+        return jsonResponse;
+    }
+
     public JSONObject requestGpt(String apiUrl, GptRequest gptRequest) {
         WebClient client = WebClient.builder()
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -91,7 +177,7 @@ public class GptQueryService {
 
         // Convert response body to JSONObject
         JSONObject jsonResponse = new JSONObject(responseBody);
-
+        System.out.println(jsonResponse);
         return jsonResponse;
     }
 }
