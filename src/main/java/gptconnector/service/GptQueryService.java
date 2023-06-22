@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -130,12 +132,15 @@ public class GptQueryService {
         InputStream inputStream = file.getInputStream();
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("image", new InputStreamResource(inputStream) {
+        File tempFile = File.createTempFile("image", null);
+        file.transferTo(tempFile);
+        FileSystemResource resource = new FileSystemResource(tempFile) {
             @Override
             public String getFilename() {
                 return file.getOriginalFilename();
             }
-        });
+        };
+        body.add("image", resource);
         body.add("prompt", gptRequest.getPrompt());
         body.add("n", String.valueOf(gptRequest.getN()));
         body.add("size", gptRequest.getSize());
