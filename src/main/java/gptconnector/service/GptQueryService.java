@@ -15,6 +15,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -51,6 +52,26 @@ public class GptQueryService {
         return claim;
     }
 
+    public HashMap<String,Object> models(HttpServletRequest request) throws Exception {
+        HashMap<String, Object> resultMap = new HashMap<>();
+
+        String apiUrl = "https://api.openai.com/v1/models";
+        GptTextRequest gptRequest = GptTextRequest.builder().build();
+        JSONObject resp = requestGpt(apiUrl, HttpMethod.GET, gptRequest);
+        JSONArray dataJSONArray = resp.getJSONArray("data");
+
+        List<HashMap<String, Object>> dataArray = new ArrayList<>();
+        for(int i =0; i< dataJSONArray.length(); i++) {
+            HashMap<String, Object> dataMap = new HashMap<>();
+            JSONObject data = dataJSONArray.getJSONObject(i);
+            dataMap.put("url", data.getString("url"));
+            dataArray.add(dataMap);
+        }
+        System.out.println(resp);
+        resultMap.put("data", dataArray);
+        return resultMap;
+    }
+
     public List<GptMessage> query(HttpServletRequest request, String prompt, List<GptMessage> prevMessages) throws Exception {
         String apiUrl = "https://api.openai.com/v1/chat/completions";
         GptTextRequest gptRequest = GptTextRequest.builder()
@@ -64,7 +85,7 @@ public class GptQueryService {
                 .role("user")
                 .content(prompt)
                 .build());
-        JSONObject resp = requestGpt(apiUrl, gptRequest);
+        JSONObject resp = requestGpt(apiUrl, HttpMethod.POST, gptRequest);
         JSONArray choicesArray = resp.getJSONArray("choices");
         JSONObject choice = choicesArray.getJSONObject(0);
         JSONObject message = choice.getJSONObject("message");
@@ -83,9 +104,9 @@ public class GptQueryService {
         String apiUrl = "https://api.openai.com/v1/images/generations";
         GptImageRequest gptRequest = GptImageRequest.builder()
                 .prompt(prompt)
-                .n(1)
+                .n(3)
                 .build();
-        JSONObject resp = requestGpt(apiUrl, gptRequest);
+        JSONObject resp = requestGpt(apiUrl, HttpMethod.POST, gptRequest);
 
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("created", resp.get("created"));
@@ -165,17 +186,27 @@ public class GptQueryService {
         return jsonResponse;
     }
 
-    public JSONObject requestGpt(String apiUrl, GptRequest gptRequest) {
+    public JSONObject requestGpt(String apiUrl, HttpMethod httpMethod, GptRequest gptRequest) {
         WebClient client = WebClient.builder()
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + OPENAI_API_KEY)
                 .build();
 
-        ClientResponse clientResponse = client.post()
+        ClientResponse clientResponse = null;
+        if(httpMethod == HttpMethod.POST) {
+            clientResponse = client
+                .method(httpMethod)
                 .uri(apiUrl)
                 .body(BodyInserters.fromValue(gptRequest))
                 .exchange()
                 .block();
+        }else if(httpMethod == HttpMethod.GET) {
+            clientResponse = client
+                .method(httpMethod)
+                .uri(apiUrl)
+                .exchange()
+                .block();
+        }
 
         // Get response body as string
         String responseBody = clientResponse.bodyToMono(String.class).block();

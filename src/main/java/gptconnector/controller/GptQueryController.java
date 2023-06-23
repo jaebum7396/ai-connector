@@ -35,6 +35,21 @@ public class GptQueryController {
         this.gptQueryService = gptQueryService;
     }
 
+    @PostMapping("/models")
+    @Operation(summary="", description="")
+    public ResponseEntity<Response> models(HttpServletRequest request) throws Exception {
+        Map<String, Object> resultMap = new LinkedHashMap<>();
+        resultMap = gptQueryService.models(request);
+
+        Response response = Response.builder()
+                .statusCode(HttpStatus.OK.value())
+                .status(HttpStatus.OK)
+                .message("요청 성공")
+                .result(resultMap)
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
+
     @PostMapping("/query")
     @Operation(summary="", description="")
     public ResponseEntity<Response> query(HttpServletRequest request, @RequestParam String prompt, @RequestBody(required = false) List<GptMessage> prevMessages) throws Exception {
