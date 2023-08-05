@@ -26,7 +26,6 @@ import java.util.Map;
 @Tag(name = "GptQueryController", description = "챗GPT query 컨트롤러")
 @RestController
 public class GptQueryController {
-
     private static final Logger logger = LoggerFactory.getLogger(GptQueryController.class);
     private final GptQueryService gptQueryService;
 
@@ -35,66 +34,37 @@ public class GptQueryController {
         this.gptQueryService = gptQueryService;
     }
 
+    public ResponseEntity<Response> okResponsePackaging(Map<String, Object> result) {
+        Response response = Response.builder()
+                .message("요청 성공")
+                .result(result).build();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/models")
+    @Operation(summary="", description="")
+    public ResponseEntity<Response> models(HttpServletRequest request) throws Exception {
+        return okResponsePackaging(gptQueryService.models(request));
+    }
+
     @PostMapping("/query")
     @Operation(summary="", description="")
     public ResponseEntity<Response> query(HttpServletRequest request, @RequestParam String prompt, @RequestBody(required = false) List<GptMessage> prevMessages) throws Exception {
-        List<GptMessage> messages = gptQueryService.query(request, prompt, prevMessages);
-
         Map<String, Object> resultMap = new LinkedHashMap<>();
+        List<GptMessage> messages = gptQueryService.query(request, prompt, prevMessages);
         resultMap.put("messages", messages);
 
-        Response response = Response.builder()
-                .statusCode(HttpStatus.OK.value())
-                .status(HttpStatus.OK)
-                .message("요청 성공")
-                .result(resultMap)
-                .build();
-        return ResponseEntity.ok().body(response);
+        return okResponsePackaging(resultMap);
     }
     @PostMapping("/images/generations")
     @Operation(summary="", description="")
     public ResponseEntity<Response> imageGenerations(HttpServletRequest request, @RequestParam String prompt) throws Exception {
-        Map<String, Object> resultMap = new LinkedHashMap<>();
-        resultMap = gptQueryService.generations(request, prompt);
-
-        Response response = Response.builder()
-                .statusCode(HttpStatus.OK.value())
-                .status(HttpStatus.OK)
-                .message("요청 성공")
-                .result(resultMap)
-                .build();
-        return ResponseEntity.ok().body(response);
+        return okResponsePackaging(gptQueryService.generations(request, prompt));
     }
 
     @PostMapping("/images/edits")
     @Operation(summary="", description="")
     public ResponseEntity<Response> imageEdits(@RequestParam String prompt, @RequestPart("file") MultipartFile file) throws Exception {
-        Map<String, Object> resultMap = new LinkedHashMap<>();
-        resultMap = gptQueryService.imageEdits(prompt, file);
-
-        Response response = Response.builder()
-                .statusCode(HttpStatus.OK.value())
-                .status(HttpStatus.OK)
-                .message("요청 성공")
-                .result(resultMap)
-                .build();
-        return ResponseEntity.ok().body(response);
-    }
-
-    @PostMapping("/images/variations")
-    @Operation(summary="", description="")
-    public ResponseEntity<Response> imageVariations(HttpServletRequest request, @RequestParam String prompt, @RequestBody(required = false) List<GptMessage> prevMessages) throws Exception {
-        List<GptMessage> messages = gptQueryService.query(request, prompt, prevMessages);
-
-        Map<String, Object> resultMap = new LinkedHashMap<>();
-        resultMap.put("messages", messages);
-
-        Response response = Response.builder()
-                .statusCode(HttpStatus.OK.value())
-                .status(HttpStatus.OK)
-                .message("요청 성공")
-                .result(resultMap)
-                .build();
-        return ResponseEntity.ok().body(response);
+        return okResponsePackaging(gptQueryService.imageEdits(prompt, file));
     }
 }
