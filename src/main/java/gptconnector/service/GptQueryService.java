@@ -76,7 +76,8 @@ public class GptQueryService {
         String apiUrl = "https://api.openai.com/v1/chat/completions";
         GptTextRequest gptRequest = GptTextRequest.builder()
                 .model("gpt-3.5-turbo")
-                .temperature(0.7)
+                //.model("gpt-4")
+                .temperature(1)
                 .build();
         if (prevMessages != null) {
             gptRequest.setMessages(prevMessages);
