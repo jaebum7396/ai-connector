@@ -40,3 +40,7 @@ openai:
 kakao:
   api:
     key: ${KAKAO_API_KEY}
+
+stable-diffusion:
+  api:
+    key: ${STABLE_DIFFUSION_API_KEY}
