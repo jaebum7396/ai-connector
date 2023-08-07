@@ -2,9 +2,13 @@ package gptconnector.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @SuperBuilder
@@ -33,7 +37,8 @@ public class KarloImageRequest {
     //확대 배율, 2 또는 4 중 하나(기본값: 2) 비고: scale 값을 4로 지정하더라도 가로세로 최대 2048 픽셀 크기까지만 확대 가능
     private int scale;
     //이미지 파일 형식, 다음 중 하나 webp jpeg png (기본값: webp)이미지 포맷, jpg 또는 png 중 하나(기본값: jpg)
-    private String image_format;
+    @Builder.Default
+    private String image_format = "png";
     //이미지 저장 품질(기본값: 70, 최소: 1, 최대: 100)
     private int image_quality;
     //생성할 이미지 수(기본값: 1, 최소: 1, 최대 8)
@@ -63,5 +68,31 @@ public class KarloImageRequest {
     //false 수행하지 않음
     //(기본값: false)
     private boolean nsfw_checker;
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> requestMap = new HashMap<>();
+
+        if (prompt != null) requestMap.put("prompt", prompt);
+        if (negative_prompt != null) requestMap.put("negative_prompt", negative_prompt);
+        if (image != null) requestMap.put("image", image);
+        if (images != null) requestMap.put("images", images);
+        if (width > 0) requestMap.put("width", width);
+        if (height > 0) requestMap.put("height", height);
+        requestMap.put("upscale", upscale);
+        if (scale > 0) requestMap.put("scale", scale);
+        if (image_format != null) requestMap.put("image_format", image_format);
+        if (image_quality > 0) requestMap.put("image_quality", image_quality);
+        if (samples > 0) requestMap.put("samples", samples);
+        if (return_type != null) requestMap.put("return_type", return_type);
+        if (prior_num_inference_steps > 0) requestMap.put("prior_num_inference_steps", prior_num_inference_steps);
+        if (prior_guidance_scale > 0.0) requestMap.put("prior_guidance_scale", prior_guidance_scale);
+        if (num_inference_steps > 0) requestMap.put("num_inference_steps", num_inference_steps);
+        if (guidance_scale > 0.0) requestMap.put("guidance_scale", guidance_scale);
+        if (scheduler != null) requestMap.put("scheduler", scheduler);
+        if (seed != null) requestMap.put("seed", seed);
+        requestMap.put("nsfw_checker", nsfw_checker);
+
+        return requestMap;
+    }
 }
 

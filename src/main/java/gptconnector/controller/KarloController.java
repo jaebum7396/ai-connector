@@ -34,16 +34,22 @@ public class KarloController {
         this.karloService = karloService;
     }
 
-    @PostMapping("/karlo/generations")
-    @Operation(summary="", description="")
-    public ResponseEntity<Response> imageGenerations(HttpServletRequest request, @RequestParam String prompt, @RequestParam String negative_prompt ) throws Exception {
-        Map<String, Object> resultMap = new LinkedHashMap<>();
-        resultMap = karloService.generations(request, prompt, negative_prompt);
-
+    public ResponseEntity<Response> okResponsePackaging(Map<String, Object> result) {
         Response response = Response.builder()
                 .message("요청 성공")
-                .result(resultMap)
-                .build();
+                .result(result).build();
         return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/karlo/generations")
+    @Operation(summary="", description="")
+    public ResponseEntity<Response> imageGenerations(HttpServletRequest request, @RequestParam String prompt, @RequestParam String negative_prompt) throws Exception {
+        return okResponsePackaging(karloService.generations(request, prompt, negative_prompt));
+    }
+
+    @PostMapping("/karlo/edits")
+    @Operation(summary="", description="")
+    public ResponseEntity<Response> imageEdits(HttpServletRequest request, @RequestParam String prompt, @RequestParam String negative_prompt, @RequestPart("file") MultipartFile file) throws Exception {
+        return okResponsePackaging(karloService.edits(request, prompt, negative_prompt, file));
     }
 }
