@@ -59,8 +59,8 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("GPT-CONNECTOR API DOCUMENTATION")
-                .description("GPT-CONNECTOR API 문서")
+                .title("AI-CONNECTOR API DOCUMENTATION")
+                .description("AI-CONNECTOR API 문서")
                 .version(version)
                 .contact(new Contact("주재범", "", "jaebum7396@naver.com"))
                 .build();
