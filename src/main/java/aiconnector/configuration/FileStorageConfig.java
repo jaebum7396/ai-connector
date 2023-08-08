@@ -1,4 +1,4 @@
-package gptconnector.configuration;
+package aiconnector.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

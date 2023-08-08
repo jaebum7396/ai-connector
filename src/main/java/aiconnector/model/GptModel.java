@@ -1,4 +1,4 @@
-package gptconnector.model;
+package aiconnector.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

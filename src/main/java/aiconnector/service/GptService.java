@@ -1,9 +1,9 @@
-package gptconnector.service;
+package aiconnector.service;
 
-import gptconnector.model.GptImageRequest;
-import gptconnector.model.GptMessage;
-import gptconnector.model.GptRequest;
-import gptconnector.model.GptTextRequest;
+import aiconnector.model.GptImageRequest;
+import aiconnector.model.GptMessage;
+import aiconnector.model.GptRequest;
+import aiconnector.model.GptTextRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -11,9 +11,7 @@ import okhttp3.OkHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -36,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class GptQueryService {
+public class GptService {
     @Value("${jwt.secret.key}")
     private String JWT_SECRET_KEY;
 
