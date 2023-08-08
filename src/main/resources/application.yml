@@ -10,7 +10,7 @@ eureka:
 
 spring:
   application:
-    name: gpt-connector
+    name: ai-connector
   profiles:
     active: deploy
   servlet:

@@ -1,4 +1,4 @@
-package gptconnector.model;
+package aiconnector.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

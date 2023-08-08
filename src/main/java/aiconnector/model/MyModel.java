@@ -1,4 +1,4 @@
-package gptconnector.model;
+package aiconnector.model;
 
 public enum MyModel {
     brav6

@@ -1,6 +1,6 @@
-package gptconnector.configuration;
+package aiconnector.configuration;
 
-import gptconnector.model.Response;
+import aiconnector.model.Response;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

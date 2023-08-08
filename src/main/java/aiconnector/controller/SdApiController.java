@@ -1,9 +1,8 @@
-package gptconnector.controller;
+package aiconnector.controller;
 
-import gptconnector.model.Response;
-import gptconnector.model.StableDiffusionApiRequest;
-import gptconnector.service.KarloService;
-import gptconnector.service.StableDiffusionService;
+import aiconnector.model.Response;
+import aiconnector.model.SdApiRequest;
+import aiconnector.service.SdApiService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -22,13 +20,13 @@ import java.util.Map;
 @Api(tags = "StableDiffusionController")
 @Tag(name = "StableDiffusionController", description = "StableDiffusion 컨트롤러")
 @RestController
-public class StableDiffusionController {
+public class SdApiController {
 
-    private static final Logger logger = LoggerFactory.getLogger(StableDiffusionController.class);
-    private final StableDiffusionService stableDiffusionService;
+    private static final Logger logger = LoggerFactory.getLogger(SdApiController.class);
+    private final SdApiService sdApiService;
     @Autowired
-    public StableDiffusionController(StableDiffusionService stableDiffusionService){
-        this.stableDiffusionService = stableDiffusionService;
+    public SdApiController(SdApiService sdApiService){
+        this.sdApiService = sdApiService;
     }
 
     public ResponseEntity<Response> okResponsePackaging(Map<String, Object> result) {
@@ -38,11 +36,11 @@ public class StableDiffusionController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/stable-diffusion/v4/dreambooth")
+    @PostMapping("/sdapi/v4/dreambooth")
     @Operation(summary="", description="")
-    public void dreambooth(HttpServletRequest request, @RequestBody StableDiffusionApiRequest stableDiffusionApiRequest) throws Exception {
+    public void dreambooth(HttpServletRequest request, @RequestBody SdApiRequest sdApiRequest) throws Exception {
         //return okResponsePackaging(stableDiffusionService.dreambooth(request, stableDiffusionApiRequest));
-        stableDiffusionService.dreambooth(request, stableDiffusionApiRequest);
+        sdApiService.dreambooth(request, sdApiRequest);
     }
 
     /*@PostMapping("/stable-diffusion/v4/dreambooth/img2img")
