@@ -1,7 +1,7 @@
 package aiconnector.service;
 
-import aiconnector.model.SdApiRequest;
-import aiconnector.model.SdApiResponse;
+import aiconnector.model.sdapi.SdApiRequest;
+import aiconnector.model.sdapi.SdApiResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -59,13 +59,15 @@ public class SdApiService {
     }
 
     public void dreambooth(HttpServletRequest request, SdApiRequest sdApiRequest) throws Exception {
-        HashMap<String, Object> resultMap = new HashMap<>();
-        String apiUrl = "https://stablediffusionapi.com/api/v4/dreambooth";
-
+        String apiUrl = "";
+        if(sdApiRequest.getInit_image() != null){
+            apiUrl = "https://stablediffusionapi.com/api/v4/dreambooth/img2img";
+        } else {
+            apiUrl = "https://stablediffusionapi.com/api/v4/dreambooth";
+        }
         SdApiRequest requestObject = sdApiRequest;
         requestObject.setKey(STABLE_DIFFUSION_API_KEY);
         requestStableDiffusionApi(apiUrl, requestObject);
-        //System.out.println(OkHttpClientRequestStableDiffusionApi(apiUrl, requestObject));
     }
 
     public void requestStableDiffusionApi(String apiUrl, SdApiRequest requestObject) {

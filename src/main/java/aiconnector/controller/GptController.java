@@ -1,6 +1,6 @@
 package aiconnector.controller;
 
-import aiconnector.model.GptMessage;
+import aiconnector.model.gpt.GptMessage;
 import aiconnector.model.Response;
 import aiconnector.service.GptService;
 import io.swagger.annotations.Api;

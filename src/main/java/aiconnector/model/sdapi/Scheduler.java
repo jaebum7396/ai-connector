@@ -1,4 +1,4 @@
-package aiconnector.model;
+package aiconnector.model.sdapi;
 
 public enum Scheduler {
     DDPMScheduler

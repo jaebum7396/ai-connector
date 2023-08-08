@@ -1,7 +1,7 @@
 package aiconnector.controller;
 
 import aiconnector.model.Response;
-import aiconnector.model.SdApiRequest;
+import aiconnector.model.sdapi.SdApiRequest;
 import aiconnector.service.SdApiService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Slf4j
-@Api(tags = "StableDiffusionController")
-@Tag(name = "StableDiffusionController", description = "StableDiffusion 컨트롤러")
+@Api(tags = "sdApiController")
+@Tag(name = "sdApiController", description = "StableDiffusionApi 컨트롤러")
 @RestController
 public class SdApiController {
 
@@ -39,13 +39,6 @@ public class SdApiController {
     @PostMapping("/sdapi/v4/dreambooth")
     @Operation(summary="", description="")
     public void dreambooth(HttpServletRequest request, @RequestBody SdApiRequest sdApiRequest) throws Exception {
-        //return okResponsePackaging(stableDiffusionService.dreambooth(request, stableDiffusionApiRequest));
         sdApiService.dreambooth(request, sdApiRequest);
     }
-
-    /*@PostMapping("/stable-diffusion/v4/dreambooth/img2img")
-    @Operation(summary="", description="")
-    public ResponseEntity<Response> dreamboothImg2Img(HttpServletRequest request, @RequestParam String prompt, @RequestParam String negative_prompt, @RequestPart("file") MultipartFile file) throws Exception {
-        return okResponsePackaging(stableDiffusionService.dreamboothImg2Img(request, prompt, negative_prompt, file));
-    }*/
 }

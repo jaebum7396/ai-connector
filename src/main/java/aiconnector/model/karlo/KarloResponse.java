@@ -1,4 +1,4 @@
-package aiconnector.model;
+package aiconnector.model.karlo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

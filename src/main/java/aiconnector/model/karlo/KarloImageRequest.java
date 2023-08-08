@@ -1,4 +1,4 @@
-package aiconnector.model;
+package aiconnector.model.karlo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

@@ -1,9 +1,9 @@
 package aiconnector.service;
 
-import aiconnector.model.GptImageRequest;
-import aiconnector.model.GptMessage;
-import aiconnector.model.GptRequest;
-import aiconnector.model.GptTextRequest;
+import aiconnector.model.gpt.GptImageRequest;
+import aiconnector.model.gpt.GptMessage;
+import aiconnector.model.gpt.GptRequest;
+import aiconnector.model.gpt.GptTextRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
