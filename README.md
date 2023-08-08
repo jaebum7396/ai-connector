@@ -1,4 +1,4 @@
-# gpt-connector
+# ai-connector
 ### 사용예시
 kakao karlo 추가
 <p align="center">
