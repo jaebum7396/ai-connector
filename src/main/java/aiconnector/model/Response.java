@@ -1,9 +1,8 @@
-package gptconnector.model;
+package aiconnector.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 

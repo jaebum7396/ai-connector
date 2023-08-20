@@ -1,7 +1,7 @@
-package gptconnector.service;
+package aiconnector.service;
 
-import gptconnector.model.StableDiffusionApiRequest;
-import gptconnector.model.StableDiffusionApiResponse;
+import aiconnector.model.sdapi.SdApiRequest;
+import aiconnector.model.sdapi.SdApiResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class StableDiffusionService {
+public class SdApiService {
     @Value("${jwt.secret.key}")
     private String JWT_SECRET_KEY;
     @Value("${stable-diffusion.api.key}")
@@ -58,17 +58,19 @@ public class StableDiffusionService {
         return claim;
     }
 
-    public void dreambooth(HttpServletRequest request, StableDiffusionApiRequest stableDiffusionApiRequest) throws Exception {
-        HashMap<String, Object> resultMap = new HashMap<>();
-        String apiUrl = "https://stablediffusionapi.com/api/v4/dreambooth";
-
-        StableDiffusionApiRequest requestObject = stableDiffusionApiRequest;
+    public void dreambooth(HttpServletRequest request, SdApiRequest sdApiRequest) throws Exception {
+        String apiUrl = "";
+        if(sdApiRequest.getInit_image() != null){
+            apiUrl = "https://stablediffusionapi.com/api/v4/dreambooth/img2img";
+        } else {
+            apiUrl = "https://stablediffusionapi.com/api/v4/dreambooth";
+        }
+        SdApiRequest requestObject = sdApiRequest;
         requestObject.setKey(STABLE_DIFFUSION_API_KEY);
         requestStableDiffusionApi(apiUrl, requestObject);
-        //System.out.println(OkHttpClientRequestStableDiffusionApi(apiUrl, requestObject));
     }
 
-    public void requestStableDiffusionApi(String apiUrl, StableDiffusionApiRequest requestObject) {
+    public void requestStableDiffusionApi(String apiUrl, SdApiRequest requestObject) {
         WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -77,10 +79,10 @@ public class StableDiffusionService {
         System.out.println("requestObject: " + requestObject.toString());
         System.out.println("requestObjectMap: " + requestObject.toMap().toString());
 
-        Mono<StableDiffusionApiResponse> responseMono = webClient.post()
+        Mono<SdApiResponse> responseMono = webClient.post()
                 .body(BodyInserters.fromValue(requestObject.toMap()))
                 .retrieve()
-                .bodyToMono(StableDiffusionApiResponse.class); // ApiResponse is a class to represent the response
+                .bodyToMono(SdApiResponse.class); // ApiResponse is a class to represent the response
 
         responseMono.subscribe(
                 response -> {
@@ -94,7 +96,7 @@ public class StableDiffusionService {
         );
     }
 
-    public Response OkHttpClientRequestStableDiffusionApi(String apiUrl, StableDiffusionApiRequest requestObject) throws IOException {
+    public Response OkHttpClientRequestStableDiffusionApi(String apiUrl, SdApiRequest requestObject) throws IOException {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/json");

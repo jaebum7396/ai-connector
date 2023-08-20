@@ -1,23 +1,18 @@
-package gptconnector.model;
+package aiconnector.model.sdapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import org.springframework.beans.factory.annotation.Value;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class StableDiffusionApiResponse {
+public class SdApiResponse {
     private String status;
     private double generationTime;
     private int id;

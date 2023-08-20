@@ -10,8 +10,9 @@ eureka:
 
 spring:
   application:
-    name: gpt-connector
+    name: ai-connector
   profiles:
+    #active: local
     active: deploy
   servlet:
     multipart:
