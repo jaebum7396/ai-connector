@@ -28,9 +28,9 @@ public class SdApiRequest {
     @Builder.Default
     private String samples = "1"; //응답에 반환될 이미지 수. 최대값은 4입니다.
     @Builder.Default
-    private String num_inference_steps="30"; //노이즈 제거 단계 수 (최소: 1; 최대: 50)
+    private String num_inference_steps="50"; //노이즈 제거 단계 수 (최소: 1; 최대: 50)
     @Builder.Default
-    private String steps="30"; //노이즈 제거 단계 수 (최소: 1; 최대: 50)
+    private String steps="50"; //노이즈 제거 단계 수 (최소: 1; 최대: 50)
     @Builder.Default
     private YesOrNo safety_checker = YesOrNo.yes; //18금 이미지를 확인하는 체커. 이러한 이미지가 감지되면 빈 이미지로 대체됩니다.
     @Builder.Default

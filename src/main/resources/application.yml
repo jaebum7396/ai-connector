@@ -12,6 +12,7 @@ spring:
   application:
     name: ai-connector
   profiles:
+    #active: local
     active: deploy
   servlet:
     multipart:
